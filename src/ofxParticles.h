@@ -143,9 +143,9 @@ public:
         
         void update(const float timeStep, const float drag){
             dt = timeStep;
+            acceleration -= (velocity * dt * (1-drag));
             velocity += acceleration * dt;
             position += velocity * dt;
-            velocity *= drag*(1.0-dt*(1.0-drag));//1.0-((1.0 - drag)*dt);
             acceleration -= acceleration * dt;
             rotation += rotationalVelocity * dt;
             
