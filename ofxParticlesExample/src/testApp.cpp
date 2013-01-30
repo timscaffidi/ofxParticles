@@ -20,33 +20,33 @@ void testApp::setup(){
     leftEmitter.life = 20;
     leftEmitter.lifeSpread = 5.0;
     leftEmitter.numPars = 3;
-    leftEmitter.color = ofColor(225,100,100);
-    leftEmitter.colorSpread = ofColor(30,50,50);
+    leftEmitter.color = ofColor(200,100,100);
+    leftEmitter.colorSpread = ofColor(50,50,50);
     
     rightEmitter = leftEmitter;
     rightEmitter.setPosition(ofVec3f(ofGetWidth()-1,ofGetHeight()*2/3));
     rightEmitter.setVelocity(ofVec3f(-150.0,0.0));
-    rightEmitter.color = ofColor(100,100,225);
-    rightEmitter.colorSpread = ofColor(50,50,30);
+    rightEmitter.color = ofColor(100,100,200);
+    rightEmitter.colorSpread = ofColor(50,50,50);
     
     topEmitter = leftEmitter;
     topEmitter.setPosition(ofVec3f(ofGetWidth()*2/3,0));
     topEmitter.setVelocity(ofVec3f(0.0,150.0));
-    topEmitter.color = ofColor(100,225,100);
-    topEmitter.colorSpread = ofColor(50,30,50);
+    topEmitter.color = ofColor(100,200,100);
+    topEmitter.colorSpread = ofColor(50,50,50);
     
     botEmitter = leftEmitter;
     botEmitter.setPosition(ofVec3f(ofGetWidth()/3,ofGetHeight()-1));
     botEmitter.setVelocity(ofVec3f(0.0,-150.0));
-    botEmitter.color = ofColor(225,255,0);
-    botEmitter.colorSpread = ofColor(30,30,0);
+    botEmitter.color = ofColor(200,200,0);
+    botEmitter.colorSpread = ofColor(50,50,0);
     
-    vectorField.allocate(25, 25, 3);
+    vectorField.allocate(128, 128, 3);
         
-    rotAcc = 20000;
-    gravAcc = 50000;
-    drag = 0.99;
-    fieldMult = 2.0;
+    rotAcc = 5000;
+    gravAcc = 10000;
+    drag = 0.5;
+    fieldMult = 1.0;
     
     ofEnableBlendMode(OF_BLENDMODE_ADD);
 }
@@ -57,9 +57,9 @@ void testApp::update(){
     for(int y = 0; y < vectorField.getHeight(); y++)
         for(int x=0; x< vectorField.getWidth(); x++){
             int index = vectorField.getPixelIndex(x, y);
-            float angle = ofNoise(x/(float)vectorField.getWidth()*4.0, y/(float)vectorField.getHeight()*4.0,ofGetElapsedTimef()*0.5)*TWO_PI*2.0;
+            float angle = ofNoise(x/(float)vectorField.getWidth()*4.0, y/(float)vectorField.getHeight()*4.0,ofGetElapsedTimef()*0.05)*TWO_PI*2.0;
             ofVec2f dir(cos(angle), sin(angle));
-            dir.normalize().scale(ofNoise(x/(float)vectorField.getWidth()*4.0, y/(float)vectorField.getHeight()*4.0,ofGetElapsedTimef()*0.5+10.0));
+            dir.normalize().scale(ofNoise(x/(float)vectorField.getWidth()*4.0, y/(float)vectorField.getHeight()*4.0,ofGetElapsedTimef()*0.05+10.0));
             vectorField.setColor(x, y, ofColor_<float>(dir.x,dir.y, 0));
         }
     
@@ -91,7 +91,7 @@ void testApp::update(){
 void testApp::draw(){
     if(ofGetKeyPressed('v')){
         ofSetLineWidth(1.0);
-        ofSetColor(50, 50, 50);
+        ofSetColor(80, 80, 80);
         ofPushMatrix();
         ofScale(ofGetWidth()/(float)vectorField.getWidth(), ofGetHeight()/(float)vectorField.getHeight());
         for(int y = 0; y < vectorField.getHeight(); y++)
@@ -115,10 +115,10 @@ void testApp::draw(){
     particleSystem.draw();
     ofSetColor(255, 255, 255);
     ofDrawBitmapString(ofToString(particleSystem.getNumParticles()) + "\n" + ofToString(ofGetFrameRate()) +
-                       "\ngravitation: " + ofToString(gravAcc) +
-                       "\nrotational acceleration: " + ofToString(rotAcc) +
-                       "\nvector field multiplier: " + ofToString(fieldMult) +
-                       "\ndrag constant: " + ofToString(drag), 20,20);
+                       "\n(G/g) gravitation: " + ofToString(gravAcc) +
+                       "\n(R/r) rotational acceleration: " + ofToString(rotAcc) +
+                       "\n(F/f)(v) vector field multiplier: " + ofToString(fieldMult) +
+                       "\n(D/d) drag constant: " + ofToString(drag), 20,20);
     
     
     
@@ -144,15 +144,15 @@ void testApp::keyPressed(int key){
             break;
             
         case 'd':
-            if(drag > 0.001)
-                drag /= 1.001;
+            if(drag > 0.01)
+                drag /= 1.01;
             break;
         case 'D':
-            drag *= 1.001;
+            drag *= 1.01;
             if(drag > 1.0) drag = 1.0;
             break;
         case 'f':
-            if(fieldMult > 1.1)
+            if(fieldMult > 0.1)
                 fieldMult /= 1.1;
             break;
         case 'F':
@@ -189,6 +189,10 @@ void testApp::mouseReleased(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::windowResized(int w, int h){
+    leftEmitter.setPosition(ofVec3f(0,h/3));
+    rightEmitter.setPosition(ofVec3f(w-1,h*2/3));
+    topEmitter.setPosition(ofVec3f(w*2/3,0));
+    botEmitter.setPosition(ofVec3f(w/3,h-1));
 }
 
 //--------------------------------------------------------------
