@@ -12,6 +12,7 @@ void testApp::setup(){
     mouseEmitter.numPars = 10;
     mouseEmitter.color = ofColor(200,200,255);
     mouseEmitter.colorSpread = ofColor(20,20,0);
+    mouseEmitter.size = 32;
     
     leftEmitter.setPosition(ofVec3f(0,ofGetHeight()/3));
     leftEmitter.setVelocity(ofVec3f(150.0,0.0));
@@ -19,9 +20,10 @@ void testApp::setup(){
     leftEmitter.velSpread = ofVec3f(10.0,10);
     leftEmitter.life = 20;
     leftEmitter.lifeSpread = 5.0;
-    leftEmitter.numPars = 3;
+    leftEmitter.numPars = 2;
     leftEmitter.color = ofColor(200,100,100);
     leftEmitter.colorSpread = ofColor(50,50,50);
+    leftEmitter.size = 32;
     
     rightEmitter = leftEmitter;
     rightEmitter.setPosition(ofVec3f(ofGetWidth()-1,ofGetHeight()*2/3));
@@ -42,11 +44,16 @@ void testApp::setup(){
     botEmitter.colorSpread = ofColor(50,50,0);
     
     vectorField.allocate(128, 128, 3);
-        
-    rotAcc = 5000;
-    gravAcc = 10000;
+    
+    ofLoadImage(pTex, "p.png");
+    ofLoadImage(p1Tex, "p1.png");
+    ofLoadImage(p2Tex, "p2.png");
+    
+    rotAcc = 4500;
+    gravAcc = 13500;
     drag = 0.5;
-    fieldMult = 1.0;
+    fieldMult = 40.0;
+    displayMode = 0;
     
     ofEnableBlendMode(OF_BLENDMODE_ADD);
 }
@@ -112,13 +119,23 @@ void testApp::draw(){
     ofCircle(ofGetWidth()/2, ofGetHeight()/2, sqrt(rotAcc));
     
     ofSetLineWidth(2.0);
-    particleSystem.draw();
+    if (displayMode == 1) {
+        particleSystem.draw(pTex);
+    }
+    else if(displayMode == 2) {
+        particleSystem.draw(p1Tex, p2Tex);
+    }
+    else {
+        particleSystem.draw();
+    }
     ofSetColor(255, 255, 255);
     ofDrawBitmapString(ofToString(particleSystem.getNumParticles()) + "\n" + ofToString(ofGetFrameRate()) +
                        "\n(G/g) gravitation: " + ofToString(gravAcc) +
                        "\n(R/r) rotational acceleration: " + ofToString(rotAcc) +
-                       "\n(F/f)(v) vector field multiplier: " + ofToString(fieldMult) +
-                       "\n(D/d) drag constant: " + ofToString(drag), 20,20);
+                       "\n(F/f) vector field multiplier: " + ofToString(fieldMult) +
+                       "\n(D/d) drag constant: " + ofToString(drag) +
+                       "\n(v) show vector field" +
+                       "\n(1-3) particle display modes" , 20,20);
     
     
     
@@ -157,6 +174,15 @@ void testApp::keyPressed(int key){
             break;
         case 'F':
             fieldMult *= 1.1;
+            break;
+        case '1':
+            displayMode = 0;
+            break;
+        case '2':
+            displayMode = 1;
+            break;
+        case '3':
+            displayMode = 2;
             break;
         default:
             break;
