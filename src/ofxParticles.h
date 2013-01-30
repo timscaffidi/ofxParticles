@@ -95,7 +95,7 @@ public:
         }
         
         void applyForce(ofVec3f force){
-            acceleration += force;
+            acceleration += force * dt;
         }
         
         void attractTo(ofxParticle p, const float accel, const float minDist, const bool consumeParticle){ attractTo(p.position, accel, minDist, consumeParticle); }
