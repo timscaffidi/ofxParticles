@@ -143,8 +143,8 @@ public:
         
         void update(const float timeStep, const float drag){
             dt = timeStep;
-            acceleration -= (velocity * dt * (1-drag));
             velocity += acceleration * dt;
+            velocity -= (velocity * dt * (1.0-drag));
             position += velocity * dt;
             acceleration -= acceleration * dt;
             rotation += rotationalVelocity * dt;
@@ -267,7 +267,7 @@ public:
                 totalParticlesEmitted+=src.numPars;
             }
             
-            void attractTo(ofPoint p, const float accel, const float minDist, const float consumeParticle){
+            void attractTo(ofPoint p, const float accel, const float minDist, const bool consumeParticle){
                 for(list<ofxParticle*>::iterator it = particles.begin(); it != particles.end(); it++){
                     (**it).attractTo(p, accel, minDist, consumeParticle);
                 }
