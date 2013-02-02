@@ -74,6 +74,10 @@ void testApp::update(){
     particleSystem.gravitateTo(ofPoint(ofGetWidth()/2,ofGetHeight()/2), gravAcc, 1, 10.0, false);
     particleSystem.rotateAround(ofPoint(ofGetWidth()/2,ofGetHeight()/2), rotAcc, 10.0, false);
     particleSystem.applyVectorField(vectorField.getPixels(), vectorField.getWidth(), vectorField.getHeight(), vectorField.getNumChannels(), ofGetWindowRect(), fieldMult);
+    if(ofGetMousePressed(2)){
+        particleSystem.gravitateTo(ofPoint(mouseX,mouseY), gravAcc, 1, 10.0, false);
+    }
+    
     particleSystem.update(dt, drag);
     
     particleSystem.addParticles(leftEmitter);
@@ -83,7 +87,7 @@ void testApp::update(){
     
     ofVec2f mouseVel(mouseX-pmouseX,mouseY - pmouseY);
     mouseVel*=20.0;
-    if(ofGetMousePressed()){
+    if(ofGetMousePressed(0)){
         mouseEmitter.setPosition(ofVec3f(pmouseX,pmouseY),ofVec3f(mouseX,mouseY));
         mouseEmitter.posSpread = ofVec3f(10.0,10.0,0.0);
         mouseEmitter.setVelocity(pmouseVel, mouseVel);
