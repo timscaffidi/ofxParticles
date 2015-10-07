@@ -93,9 +93,88 @@ public:
             dt = 1.0/60;
             return *this;
         }
-        
+
+        void constrainToRect(ofRectangle bounds, const float k, const float dist, const float drag)
+        {
+            ofPoint minPoint = bounds.getTopLeft();
+            ofPoint maxPoint = bounds.getBottomRight();
+            float inverse_drag = 1.0f / drag;
+            float inverse_mass = 1.0f / mass;
+            float spring_constant = inverse_mass * inverse_drag;
+            float force;
+            ofVec3f dir;
+            float dis;
+
+            // left side
+            if (position.x < minPoint.x) {
+                velocity.x = minPoint.x - position.x;
+                position.x = minPoint.x+1;
+            }
+            if (position.x < minPoint.x + dist) {
+                dir = ofVec3f(1,0,0);
+                dis = position.x - minPoint.x;
+                dis = dist - dis;
+                force = -k * dis * spring_constant;
+                acceleration += dir*(-force);
+            } else {
+                // right side
+                if (position.x > maxPoint.x) {
+                    velocity.x = maxPoint.x - position.x;
+                    position.x = maxPoint.x-1;
+                }
+                if (position.x > maxPoint.x - dist) {
+                    dir = ofVec3f(-1,0,0);
+                    dis = maxPoint.x - position.x;
+                    dis = dist - dis;
+                    force =  -k * dis * spring_constant;
+                    acceleration += dir*(-force);
+                }
+            }
+
+            // top side
+            if (position.y < minPoint.y) {
+                velocity.y = minPoint.y - position.y;
+                position.y = minPoint.y+1;
+            }
+            if (position.y < minPoint.y + dist) {
+                dir = ofVec3f(0,1,0);
+                dis = position.y - minPoint.y;
+                dis = dist - dis;
+                force = -k * dis * spring_constant;
+                acceleration += dir*(-force);
+            } else {
+                // bottom side
+                if (position.y > maxPoint.y) {
+                    velocity.y = maxPoint.y - position.y;
+                    position.y = maxPoint.y-1;
+                }
+                if (position.y > maxPoint.y - dist) {
+                    dir = ofVec3f(0,-1,0);
+                    dis = maxPoint.y - position.y;
+                    dis = dist - dis;
+                    force =  -k * dis * spring_constant;
+                    acceleration += dir*(-force);
+                }
+            }
+        }
+
         void applyForce(ofVec3f force){
             acceleration += force * dt;
+        }
+
+        // void spring(ofPoint p, const float k, const float springDist, const float drag){ spring(p, k, springDist, drag); }
+        float springBoth(ofxParticle * p, const float k, const float springDist, const float drag = 1.0f, const float springSnap = 1.0f){
+            float dist = position.distance(p->position);
+            if(dist > springDist * springSnap) return 0.0;
+
+            dist = springDist - dist;
+            float force = (-k / (mass * p->mass)) * (dist / drag);
+
+            ofVec3f dir = ((ofVec3f)(p->position - position)).normalized();
+
+            acceleration += dir * (force / mass);
+            p->acceleration -= dir * (force / p->mass);
+            return -force;
         }
         
         void attractTo(ofxParticle p, const float accel, const float minDist, const bool consumeParticle){ attractTo(p.position, accel, minDist, consumeParticle); }
@@ -124,6 +203,20 @@ public:
             }
             dir.normalize().scale( gravity * mass * mass2 * dt * (1.0/(dist)));
             acceleration += dir;
+        }
+
+        void gravitateBoth(ofxParticle * p, const float gravity, const float minDist, bool consumeParticle = false) {
+           if(p==this) return;
+            ofVec3f dir = p->position - position;
+            float dist = dir.length();
+            if(dist < minDist){
+                dist = minDist;
+                if(consumeParticle)
+                    life = 0;
+            }
+            dir.normalize().scale( gravity * mass * p->mass * dt * (1.0/(dist)));
+            acceleration += dir; 
+            p->acceleration -= dir;
         }
         
         void rotateAround(ofxParticle p, const float accel, const float minDist, const bool consumeParticle) { rotateAround(p.position, accel, minDist, consumeParticle); }
