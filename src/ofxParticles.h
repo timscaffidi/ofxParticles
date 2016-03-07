@@ -170,7 +170,7 @@ public:
             dist = springDist - dist;
             float force = (-k / (mass * p->mass)) * (dist / drag);
 
-            ofVec3f dir = ((ofVec3f)(p->position - position)).normalized();
+            ofVec3f dir = ((ofVec3f)(p->position - position)).getNormalized();
 
             acceleration += dir * (force / mass);
             p->acceleration -= dir * (force / p->mass);
@@ -249,7 +249,7 @@ public:
             ofColor c = color;
             c.a = life/lifeStart*color.a;
             ofSetColor(c);
-            ofLine(position, position-velocity*dt);
+            ofDrawLine(position, position-velocity*dt);
         }
         
         void draw(ofTexture &tex){
@@ -335,8 +335,8 @@ public:
                     ofVec3f vel = src.velocityStart;
                     if(src.positionEnd != src.positionStart || src.velocityStart != src.velocityEnd){
                         float rf = ofRandomuf();
-                        pos = src.positionStart.interpolated(src.positionEnd, rf);
-                        vel = src.velocityStart.interpolated(src.velocityEnd, rf);
+                        pos = src.positionStart.getInterpolated(src.positionEnd, rf);
+                        vel = src.velocityStart.getInterpolated(src.velocityEnd, rf);
                     }
                     ofVec3f p = pos+ofRandVec3f()*src.posSpread;
                     ofVec3f v = vel+ofRandVec3f()*src.velSpread;
