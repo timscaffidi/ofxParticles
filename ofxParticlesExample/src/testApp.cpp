@@ -73,7 +73,7 @@ void testApp::update(){
     float dt = min(ofGetLastFrameTime(), 1.0/10.0);
     particleSystem.gravitateTo(ofPoint(ofGetWidth()/2,ofGetHeight()/2), gravAcc, 1, 10.0, false);
     particleSystem.rotateAround(ofPoint(ofGetWidth()/2,ofGetHeight()/2), rotAcc, 10.0, false);
-    particleSystem.applyVectorField(vectorField.getPixels(), vectorField.getWidth(), vectorField.getHeight(), vectorField.getNumChannels(), ofGetWindowRect(), fieldMult);
+    particleSystem.applyVectorField(vectorField.getData(), vectorField.getWidth(), vectorField.getHeight(), vectorField.getNumChannels(), ofGetWindowRect(), fieldMult);
     if(ofGetMousePressed(2)){
         particleSystem.gravitateTo(ofPoint(mouseX,mouseY), gravAcc, 1, 10.0, false);
     }
@@ -110,7 +110,7 @@ void testApp::draw(){
                 ofColor_<float> c = vectorField.getColor(x, y);
                 ofVec2f dir(c.r,c.g);
                 
-                ofLine(x, y, x+dir.x, y+dir.y);
+                ofDrawLine(x, y, x+dir.x, y+dir.y);
             }
         ofPopMatrix();
     }
@@ -118,9 +118,9 @@ void testApp::draw(){
     ofNoFill();
     ofSetCircleResolution(180);
     ofSetColor(255, 0, 0, 50);
-    ofCircle(ofGetWidth()/2, ofGetHeight()/2, sqrt(gravAcc));
+    ofDrawCircle(ofGetWidth()/2, ofGetHeight()/2, sqrt(gravAcc));
     ofSetColor(0, 0, 255, 50);
-    ofCircle(ofGetWidth()/2, ofGetHeight()/2, sqrt(rotAcc));
+    ofDrawCircle(ofGetWidth()/2, ofGetHeight()/2, sqrt(rotAcc));
     
     ofSetLineWidth(2.0);
     if (displayMode == 1) {
