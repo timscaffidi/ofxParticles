@@ -48,7 +48,7 @@ public:
         dt = 1.0/60;
     }
 
-    ofxParticle(ofVec3f pos, ofVec3f vel, float size_, float life_) {
+    ofxParticle(ofVec3f pos, ofVec3f vel, float size_ = 1.0, float life_ = 1.0) {
         position = pos;
         velocity = vel;
         acceleration = ofVec3f(0,0,0);
@@ -177,8 +177,8 @@ public:
         return -force;
     }
 
-    void attractTo(ofxParticle p, const float accel, const float minDist, const bool consumeParticle) { attractTo(p.position, accel, minDist, consumeParticle); }
-    void attractTo(ofPoint p, const float accel, const float minDist, const bool consumeParticle) {
+    void attractTo(ofxParticle p, const float accel, const float minDist, const bool consumeParticle = false) { attractTo(p.position, accel, minDist, consumeParticle); }
+    void attractTo(ofPoint p, const float accel, const float minDist, const bool consumeParticle = false) {
         ofVec3f dir = p-position;
         float dist = dir.length();
         if(dist < minDist) {
@@ -191,8 +191,8 @@ public:
         acceleration += dir;
     }
 
-    void gravitateTo(ofxParticle p, const float gravity, const float minDist, const bool consumeParticle) { gravitateTo(p.position, gravity, p.mass, minDist, consumeParticle); }
-    void gravitateTo(ofPoint p, const float gravity, const float mass2, const float minDist, const bool consumeParticle) {
+    void gravitateTo(ofxParticle p, const float gravity, const float minDist, const bool consumeParticle = false) { gravitateTo(p.position, gravity, p.mass, minDist, consumeParticle); }
+    void gravitateTo(ofPoint p, const float gravity, const float mass2, const float minDist, const bool consumeParticle = false) {
         if(p==position) return;
         ofVec3f dir = p-position;
         float dist = dir.length();
@@ -219,8 +219,8 @@ public:
         p->acceleration -= dir;
     }
 
-    void rotateAround(ofxParticle p, const float accel, const float minDist, const bool consumeParticle) { rotateAround(p.position, accel, minDist, consumeParticle); }
-    void rotateAround(ofPoint p, const float accel, const float minDist, const bool consumeParticle) {
+    void rotateAround(ofxParticle p, const float accel, const float minDist, const bool consumeParticle = false) { rotateAround(p.position, accel, minDist, consumeParticle); }
+    void rotateAround(ofPoint p, const float accel, const float minDist, const bool consumeParticle = false) {
         ofVec3f toPoint = position - p;
         ofVec3f dir = ofVec3f(-toPoint.y, toPoint.x, toPoint.z);
         float dist = toPoint.length();
@@ -360,7 +360,7 @@ public:
         totalParticlesEmitted+=src.numPars;
     }
 
-    void attractTo(ofPoint p, const float accel, const float minDist, const bool consumeParticle) {
+    void attractTo(ofPoint p, const float accel, const float minDist, const bool consumeParticle = false) {
         for(list<ofxParticle*>::iterator it = particles.begin(); it != particles.end(); it++) {
             (**it).attractTo(p, accel, minDist, consumeParticle);
         }
