@@ -12,7 +12,7 @@
 #include "ofMain.h"
 
 
-inline ofVec3f ofRandVec3f(){
+inline ofVec3f ofRandVec3f() {
     return ofVec3f(ofRandomf(),ofRandomf(),ofRandomf()).normalize().scale(ofRandomf());
 }
 
@@ -34,11 +34,11 @@ public:
     int particleID;
 
 
-    bool operator < (const ofxParticle &b){
+    bool operator < (const ofxParticle &b) {
         return position.z < b.position.z;
     }
 
-    ofxParticle(){
+    ofxParticle() {
         position = velocity = acceleration = ofVec3f(0,0,0);
         color = ofColor(255,255,255,255);
         mass = 1.0;
@@ -48,7 +48,7 @@ public:
         dt = 1.0/60;
     }
 
-    ofxParticle(ofVec3f pos, ofVec3f vel, float size_, float life_){
+    ofxParticle(ofVec3f pos, ofVec3f vel, float size_, float life_) {
         position = pos;
         velocity = vel;
         acceleration = ofVec3f(0,0,0);
@@ -60,7 +60,7 @@ public:
         dt = 1.0/60;
     }
 
-    ofxParticle(const ofxParticle &mom){
+    ofxParticle(const ofxParticle &mom) {
         position = mom.position;
         velocity = mom.velocity;
         acceleration = mom.acceleration;
@@ -75,9 +75,9 @@ public:
         dt = 1.0/60;
     }
 
-    ~ofxParticle(){}
+    ~ofxParticle() {}
 
-    ofxParticle & operator=(const ofxParticle &mom){
+    ofxParticle & operator=(const ofxParticle &mom) {
         if(&mom==this) return *this;
         position = mom.position;
         velocity = mom.velocity;
@@ -158,12 +158,12 @@ public:
         }
     }
 
-    void applyForce(ofVec3f force){
+    void applyForce(ofVec3f force) {
         acceleration += force * dt;
     }
 
-    // void spring(ofPoint p, const float k, const float springDist, const float drag){ spring(p, k, springDist, drag); }
-    float springBoth(ofxParticle * p, const float k, const float springDist, const float drag = 1.0f, const float springSnap = 1.0f){
+    // void spring(ofPoint p, const float k, const float springDist, const float drag) { spring(p, k, springDist, drag); }
+    float springBoth(ofxParticle * p, const float k, const float springDist, const float drag = 1.0f, const float springSnap = 1.0f) {
         float dist = position.distance(p->position);
         if(dist > springDist * springSnap) return 0.0;
 
@@ -177,11 +177,11 @@ public:
         return -force;
     }
 
-    void attractTo(ofxParticle p, const float accel, const float minDist, const bool consumeParticle){ attractTo(p.position, accel, minDist, consumeParticle); }
-    void attractTo(ofPoint p, const float accel, const float minDist, const bool consumeParticle){
+    void attractTo(ofxParticle p, const float accel, const float minDist, const bool consumeParticle) { attractTo(p.position, accel, minDist, consumeParticle); }
+    void attractTo(ofPoint p, const float accel, const float minDist, const bool consumeParticle) {
         ofVec3f dir = p-position;
         float dist = dir.length();
-        if(dist < minDist){
+        if(dist < minDist) {
             dist = minDist;
             if(consumeParticle)
                 life = 0;
@@ -191,12 +191,12 @@ public:
         acceleration += dir;
     }
 
-    void gravitateTo(ofxParticle p, const float gravity, const float minDist, const bool consumeParticle){ gravitateTo(p.position, gravity, p.mass, minDist, consumeParticle); }
-    void gravitateTo(ofPoint p, const float gravity, const float mass2, const float minDist, const bool consumeParticle){
+    void gravitateTo(ofxParticle p, const float gravity, const float minDist, const bool consumeParticle) { gravitateTo(p.position, gravity, p.mass, minDist, consumeParticle); }
+    void gravitateTo(ofPoint p, const float gravity, const float mass2, const float minDist, const bool consumeParticle) {
         if(p==position) return;
         ofVec3f dir = p-position;
         float dist = dir.length();
-        if(dist < minDist){
+        if(dist < minDist) {
             dist = minDist;
             if(consumeParticle)
                 life = 0;
@@ -209,7 +209,7 @@ public:
        if(p==this) return;
         ofVec3f dir = p->position - position;
         float dist = dir.length();
-        if(dist < minDist){
+        if(dist < minDist) {
             dist = minDist;
             if(consumeParticle)
                 life = 0;
@@ -220,11 +220,11 @@ public:
     }
 
     void rotateAround(ofxParticle p, const float accel, const float minDist, const bool consumeParticle) { rotateAround(p.position, accel, minDist, consumeParticle); }
-    void rotateAround(ofPoint p, const float accel, const float minDist, const bool consumeParticle){
+    void rotateAround(ofPoint p, const float accel, const float minDist, const bool consumeParticle) {
         ofVec3f toPoint = position - p;
         ofVec3f dir = ofVec3f(-toPoint.y, toPoint.x, toPoint.z);
         float dist = toPoint.length();
-        if(dist < minDist){
+        if(dist < minDist) {
             dist = minDist;
             if(consumeParticle)
                 life = 0;
@@ -234,7 +234,7 @@ public:
         acceleration += dir;
     }
 
-    void update(const float timeStep, const float drag){
+    void update(const float timeStep, const float drag) {
         dt = timeStep;
         velocity += acceleration * dt;
         velocity -= (velocity * dt * (1.0-drag));
@@ -245,17 +245,17 @@ public:
         life -= dt;
     }
 
-    void draw(){
+    void draw() {
         ofColor c = color;
         c.a = life/lifeStart*color.a;
         ofSetColor(c);
         ofDrawLine(position, position-velocity*dt);
     }
 
-    void draw(ofTexture &tex){
+    void draw(ofTexture &tex) {
         float w = tex.getWidth();
         float h = tex.getHeight();
-        if(w > h){
+        if(w > h) {
             h = h/w*size;
             w = size;
         }
@@ -283,7 +283,7 @@ public:
     rotation(),rotSpread(),rotVel(),rotVelSpread(),size(1.0),sizeSpread(0.0),
     life(1.0),lifeSpread(0.0),numPars(1),color(255,255,255,255),colorSpread(0,0,0,0)
     {}
-    ~ofxParticleEmitter(){}
+    ~ofxParticleEmitter() {}
     ofVec3f positionStart;
     ofVec3f positionEnd;
     ofVec3f posSpread;
@@ -301,20 +301,20 @@ public:
     int numPars;
     ofColor color;
     ofColor colorSpread;
-    ofxParticleEmitter & setPosition(ofVec3f pos){
+    ofxParticleEmitter & setPosition(ofVec3f pos) {
         positionStart = positionEnd = pos;
         return *this;
     }
-    ofxParticleEmitter & setPosition(ofVec3f posStart, ofVec3f posEnd){
+    ofxParticleEmitter & setPosition(ofVec3f posStart, ofVec3f posEnd) {
         positionStart = posStart;
         positionEnd = posEnd;
         return *this;
     }
-    ofxParticleEmitter & setVelocity(ofVec3f vel){
+    ofxParticleEmitter & setVelocity(ofVec3f vel) {
         velocityStart = velocityEnd = vel;
         return *this;
     }
-    ofxParticleEmitter & setVelocity(ofVec3f velStart, ofVec3f velEnd){
+    ofxParticleEmitter & setVelocity(ofVec3f velStart, ofVec3f velEnd) {
         velocityStart = velStart;
         velocityEnd = velEnd;
         return *this;
@@ -323,17 +323,17 @@ public:
 
 class ofxParticleSystem {
 public:
-    ofxParticleSystem(){
+    ofxParticleSystem() {
         numParticles = 0;
         totalParticlesEmitted = 0;
     }
-    ~ofxParticleSystem(){}
+    ~ofxParticleSystem() {}
 
-    void addParticles(ofxParticleEmitter & src){
-        for(int i=0;i<src.numPars;i++){
+    void addParticles(ofxParticleEmitter & src) {
+        for(int i=0;i<src.numPars;i++) {
             ofVec3f pos = src.positionStart;
             ofVec3f vel = src.velocityStart;
-            if(src.positionEnd != src.positionStart || src.velocityStart != src.velocityEnd){
+            if(src.positionEnd != src.positionStart || src.velocityStart != src.velocityEnd) {
                 float rf = ofRandomuf();
                 pos = src.positionStart.getInterpolated(src.positionEnd, rf);
                 vel = src.velocityStart.getInterpolated(src.velocityEnd, rf);
@@ -347,7 +347,7 @@ public:
             par->rotationalVelocity = src.rotVel+ofRandVec3f()*src.rotVelSpread;
             par->particleID = totalParticlesEmitted+i;
             ofColor pColor = src.color;
-            if(src.colorSpread != ofColor(0,0,0,0)){
+            if(src.colorSpread != ofColor(0,0,0,0)) {
                 pColor.r = ofClamp(pColor.r + ofRandomf()*src.colorSpread.r,0,255);
                 pColor.g = ofClamp(pColor.g + ofRandomf()*src.colorSpread.g,0,255);
                 pColor.b = ofClamp(pColor.b + ofRandomf()*src.colorSpread.b,0,255);
@@ -360,29 +360,29 @@ public:
         totalParticlesEmitted+=src.numPars;
     }
 
-    void attractTo(ofPoint p, const float accel, const float minDist, const bool consumeParticle){
-        for(list<ofxParticle*>::iterator it = particles.begin(); it != particles.end(); it++){
+    void attractTo(ofPoint p, const float accel, const float minDist, const bool consumeParticle) {
+        for(list<ofxParticle*>::iterator it = particles.begin(); it != particles.end(); it++) {
             (**it).attractTo(p, accel, minDist, consumeParticle);
         }
     }
 
-    void gravitateTo(ofPoint p, const float gravity, const float mass, const float minDist, const float consumeParticle){
-        for(list<ofxParticle*>::iterator it = particles.begin(); it != particles.end(); it++){
+    void gravitateTo(ofPoint p, const float gravity, const float mass, const float minDist, const float consumeParticle) {
+        for(list<ofxParticle*>::iterator it = particles.begin(); it != particles.end(); it++) {
             (**it).gravitateTo(p, gravity, mass, minDist, consumeParticle);
         }
     }
 
     void rotateAround(ofPoint p, const float accel, const float minDist, const float consumeParticle) {
-        for(list<ofxParticle*>::iterator it = particles.begin(); it != particles.end(); it++){
+        for(list<ofxParticle*>::iterator it = particles.begin(); it != particles.end(); it++) {
             (**it).rotateAround(p, accel, minDist, consumeParticle);
         }
     }
 
     void applyVectorField(float * field, int fieldWidth, int fieldHeight, int numComponents, ofRectangle areaOfInfluence, float force) {
-        for(list<ofxParticle*>::iterator it = particles.begin(); it != particles.end(); it++){
+        for(list<ofxParticle*>::iterator it = particles.begin(); it != particles.end(); it++) {
             ofxParticle & p = (**it);
             ofVec2f pos(p.position.x,p.position.y);
-            if(areaOfInfluence.inside(pos)){
+            if(areaOfInfluence.inside(pos)) {
                 int x = (int)ofMap(pos.x, areaOfInfluence.getMinX(), areaOfInfluence.getMaxX(), 0, fieldWidth-1);
                 int y = (int)ofMap(pos.y, areaOfInfluence.getMinY(), areaOfInfluence.getMaxY(), 0, fieldHeight-1);
                 int index = (x+y*fieldWidth)*numComponents;
@@ -393,10 +393,10 @@ public:
         }
     }
 
-    int update(float timeStep, float drag){
+    int update(float timeStep, float drag) {
         int particlesRemoved = 0;
-        for(list<ofxParticle*>::iterator it = particles.begin(); it != particles.end(); it++){
-            if((**it).isAlive()){
+        for(list<ofxParticle*>::iterator it = particles.begin(); it != particles.end(); it++) {
+            if((**it).isAlive()) {
                 (**it).update(timeStep, drag);
             }
             else{
@@ -410,20 +410,20 @@ public:
         return particlesRemoved;
     }
 
-    void draw(){
-        for(list<ofxParticle*>::iterator it = particles.begin(); it != particles.end(); it++){
+    void draw() {
+        for(list<ofxParticle*>::iterator it = particles.begin(); it != particles.end(); it++) {
             (**it).draw();
         }
     }
 
-    void draw(ofTexture &tex){
-        for(list<ofxParticle*>::iterator it = particles.begin(); it != particles.end(); it++){
+    void draw(ofTexture &tex) {
+        for(list<ofxParticle*>::iterator it = particles.begin(); it != particles.end(); it++) {
             (**it).draw(tex);
         }
     }
 
-    void draw(ofTexture &tex, ofTexture &tex2){
-        for(list<ofxParticle*>::iterator it = particles.begin(); it != particles.end(); it++){
+    void draw(ofTexture &tex, ofTexture &tex2) {
+        for(list<ofxParticle*>::iterator it = particles.begin(); it != particles.end(); it++) {
             int index = (**it).particleID;
             if(index%2==0)
                 (**it).draw(tex);
@@ -432,7 +432,7 @@ public:
         }
     }
 
-    int getNumParticles(){return numParticles;}
+    int getNumParticles() {return numParticles;}
 
 private:
     list<ofxParticle*> particles;
