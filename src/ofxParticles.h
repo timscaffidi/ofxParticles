@@ -172,6 +172,25 @@ public:
     }
 
     // void spring(ofPoint p, const float k, const float springDist, const float drag) { spring(p, k, springDist, drag); }
+    float spring(ofVec3f pos, const float k, const float springDist, const float drag = 1.0f, const float springSnap = 1.0f) {
+        if (abs(position.x - pos.x) > springDist * springSnap || abs(position.y - pos.y) > springDist * springSnap) return 0.0f;
+
+        float dist = position.squareDistance(pos);
+        if(dist > springDist * springDist * springSnap) return 0.0f;
+
+        dist = fastSqrt(dist);
+        dist = springDist - dist;
+
+        float force = (-k / (mass * 1.0)) * (dist / drag);
+
+        ofVec3f dir = ((ofVec3f)(pos - position));
+        dir = (dir / fastSqrt(dir.lengthSquared()));
+
+        acceleration += dir * force * dt;
+        return -force;
+    }
+
+    // void spring(ofPoint p, const float k, const float springDist, const float drag) { spring(p, k, springDist, drag); }
     float springBoth(ofxParticle * p, const float k, const float springDist, const float drag = 1.0f, const float springSnap = 1.0f) {
         if (abs(position.x - p->position.x) > springDist * springSnap || abs(position.y - p->position.y) > springDist * springSnap) return 0.0f;
 
@@ -254,9 +273,9 @@ public:
         dt = timeStep;
         ofVec3f a = (acceleration * dt) / mass;
         velocity += a;
-        velocity -= (velocity * dt * (1.0f - drag));
-        position += velocity * dt;
         acceleration -= a;
+        position += velocity * dt;
+        velocity -= (velocity * dt * (1.0f - drag));
         rotation += rotationalVelocity * dt;
 
         life -= dt;
@@ -479,8 +498,12 @@ public:
         }
     }
 
-    int getNeighbors(vector<ofxParticle *> &neighbors, ofxParticle &p, const float radius) {
-        return getNeighbors(neighbors, p.position.x, p.position.y, radius);
+    int getNeighbors(vector<ofxParticle *> &neighbors, const ofxParticle p, const float radius) {
+        return getNeighbors(neighbors, p.position, radius);
+    }
+
+    int getNeighbors(vector<ofxParticle *> &neighbors, const ofVec3f p, const float radius) {
+        return getNeighbors(neighbors, p.x, p.y, radius);
     }
 
     int getNeighbors(vector<ofxParticle *> &neighbors, float targetX, float targetY, const float radius) {
